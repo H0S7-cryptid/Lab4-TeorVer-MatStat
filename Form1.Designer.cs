@@ -53,11 +53,14 @@ namespace ЛАБА_ТВИМС__1
             this.label6 = new System.Windows.Forms.Label();
             this.numericUpDown4 = new System.Windows.Forms.NumericUpDown();
             this.label8 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.numericUpDown5 = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chartForHitogramms)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).BeginInit();
             this.SuspendLayout();
             // 
             // button1
@@ -258,11 +261,11 @@ namespace ЛАБА_ТВИМС__1
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(817, 766);
+            this.label6.Location = new System.Drawing.Point(1145, 766);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(454, 16);
+            this.label6.Size = new System.Drawing.Size(288, 16);
             this.label6.TabIndex = 17;
-            this.label6.Text = "Уровень значимости ошибки первого рода (значение в сотых долях)";
+            this.label6.Text = "Уровень значимости ошибки первого рода\r\n";
             this.label6.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // numericUpDown4
@@ -273,7 +276,7 @@ namespace ЛАБА_ТВИМС__1
             0,
             0,
             131072});
-            this.numericUpDown4.Location = new System.Drawing.Point(927, 785);
+            this.numericUpDown4.Location = new System.Drawing.Point(1161, 785);
             this.numericUpDown4.Maximum = new decimal(new int[] {
             1,
             0,
@@ -303,11 +306,44 @@ namespace ЛАБА_ТВИМС__1
             this.label8.Text = "Здесь будет информация о гипотезе высоком качестве чисел\r\n(\"выборочное распределе" +
     "ние совпадает с теоретическим\").\r\n";
             // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(658, 775);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(245, 32);
+            this.label7.TabIndex = 22;
+            this.label7.Text = "Количество интервалов для рачёта\r\nнаблюдаемого значения хи-квадрат";
+            // 
+            // numericUpDown5
+            // 
+            this.numericUpDown5.Location = new System.Drawing.Point(934, 785);
+            this.numericUpDown5.Maximum = new decimal(new int[] {
+            1000000,
+            0,
+            0,
+            0});
+            this.numericUpDown5.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericUpDown5.Name = "numericUpDown5";
+            this.numericUpDown5.Size = new System.Drawing.Size(157, 22);
+            this.numericUpDown5.TabIndex = 23;
+            this.numericUpDown5.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1517, 830);
+            this.Controls.Add(this.numericUpDown5);
+            this.Controls.Add(this.label7);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.numericUpDown4);
             this.Controls.Add(this.label6);
@@ -333,6 +369,7 @@ namespace ЛАБА_ТВИМС__1
             ((System.ComponentModel.ISupportInitialize)(this.chartForHitogramms)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -358,6 +395,8 @@ namespace ЛАБА_ТВИМС__1
         private System.Windows.Forms.Label label6;
         private NumericUpDown numericUpDown4;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label7;
+        private NumericUpDown numericUpDown5;
     }
 }
 
