@@ -1,4 +1,5 @@
 using System;
+using System.Data;
 using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Windows.Forms;
@@ -27,7 +28,6 @@ namespace ЛАБА_ТВИМС__1
         double[] sample;
         double[] xi;
         double sampleVar, groupedMedian, orderedMedian, modeSimple, modeAdjusted, avg;
-
         private void button1_Click(object sender, EventArgs e)
         {
             int numOfvalues = (int)this.numericUpDown1.Value;
@@ -154,8 +154,8 @@ namespace ЛАБА_ТВИМС__1
                 cumulative += Yvalue[i] * width;
                 if (cumulative >= 0.5)
                 {
-                    double L = Xvalue[i];  
-                    double h = width;      
+                    double L = Xvalue[i];
+                    double h = width;
                     double median = L + ((0.5 - prevCumulative) / Yvalue[i]) * h;
                     return median;
                 }
@@ -195,7 +195,8 @@ namespace ЛАБА_ТВИМС__1
             double modeAdjusted = denominator == 0 ? modeSimple : L + ((f_m - f_prev) / denominator) * h;
             return (modeSimple, modeAdjusted);
         }
-        private void ComputeCharsOfLin() {
+        private void ComputeCharsOfLin()
+        {
             int numOfvalues = (int)numericUpDown1.Value;
             int numOfBars = (int)numericUpDown2.Value;
 
@@ -223,43 +224,65 @@ namespace ЛАБА_ТВИМС__1
         }
         private void PirsDistributionHiSq()
         {
-            Microsoft.Office.Interop.Excel.Application _ex = new Microsoft.Office.Interop.Excel.Application();
+            var _ex = new Microsoft.Office.Interop.Excel.Application();
 
-            double lvlOfSignificance = (double)this.numericUpDown4.Value;
-            double ProbabilityOfInterval = 1 / (double)numericUpDown2.Value;
-            int k = xi.Length - 1;
-            int r = k - 1;
+            int numIntervals = (int)numericUpDown5.Value;
+            double overallMin = 0.0;
+            double overallMax = 2.0;
+            double step = (overallMax - overallMin) / numIntervals;
+            double lvlOfSignificance = (double)numericUpDown4.Value;
 
-            double critXiSq = Math.Round(_ex.WorksheetFunction.ChiInv(lvlOfSignificance, r), 3);
+            double[] filteredSample = sample.Where(x => x >= overallMin && x <= overallMax).ToArray();
+            double N = filteredSample.Length;
 
-            double[] counts = new double[xi.Length];
+            if (N == 0 || numIntervals < 2)
+            {
+                label8.Text = "Недостаточно данных или слишком мало интервалов.";
+                return;
+            }
 
-            for (int j = 0; j < xi.Length - 1; j++) {
-                double lowBar = xi[j];
-                double highBar = xi[j + 1];
-                for (int i = 0; i < sample.Length; i++) {
-                    if (sample[i] > lowBar && sample[i] < highBar) counts[j]++;
-                }
+            int degreesOfFreedom = numIntervals - 1;
+            double critXiSq = Math.Round(_ex.WorksheetFunction.ChiInv(lvlOfSignificance, degreesOfFreedom), 3);
+
+            double[] counts = new double[numIntervals];
+
+            foreach (double value in filteredSample)
+            {
+                int index = (int)((value - overallMin) / step);
+                if (index >= numIntervals) index = numIntervals - 1;
+                counts[index]++;
             }
 
             double XiSq = 0;
-            for (int i = 0; i < k; i++) {
-                double Numerator = counts[i] - sample.Length * ProbabilityOfInterval;
-                XiSq += Math.Pow(Numerator, 2) / (sample.Length * ProbabilityOfInterval);
+            for (int j = 0; j < numIntervals; j++)
+            {
+                double lowBound = overallMin + j * step;
+                double highBound = overallMin + (j + 1) * step;
+                double p_i = ((highBound * highBound) - (lowBound * lowBound)) / 4.0;
+                double expectedFrequency = N * p_i;
+
+                if (expectedFrequency < 5)
+                {
+                    highBound += step;
+                    p_i = ((highBound * highBound) - (lowBound * lowBound)) / 4.0;
+                    expectedFrequency = N * p_i;
+                }
+
+                double diff = counts[j] - expectedFrequency;
+                XiSq += (diff * diff) / expectedFrequency;
             }
 
-            if (XiSq <= critXiSq) {
-                label8.Text = $"Полученное значение наблюдаемой величины Хи-Квадрат: {XiSq}\n" + 
-                              $"Предполагаемое критическое значение этой величины: {critXiSq}\n" + 
-                              $"Это обозначает то, что гипотеза H0 о том,\n" + 
-                              $"что \"выборочное\" распределение совпадает с \"теоритическим\" ВЕРНА!";
+            if (XiSq <= critXiSq)
+            {
+                label8.Text = $"Полученное значение Хи-Квадрат: {XiSq:F3}\n" +
+                              $"Критическое значение: {critXiSq}\n" +
+                              $"Гипотеза H0 подтверждается: выборочное распределение соответствует f(x)=0.5x.";
             }
-            else if (XiSq > critXiSq) {
-                label8.Text = "Гипотеза H0 о совпадении \"выборочного\" и \n\"теоритического\" распределения НЕВЕРНА!";
-            }
-            else {
-                label8.Text = "Здесь будет информация о гипотезе высоком качестве чисел" + 
-                    "\r\n(\"выборочное распределtние совпадает с теоретическим\").\r\n";
+            else
+            {
+                label8.Text = $"Полученное значение Хи-Квадрат: {XiSq:F3}\n" +
+                              $"Критическое значение: {critXiSq}\n" +
+                              $"Гипотеза H0 отвергается: выборочное распределение не соответствует f(x)=0.5x.";
             }
         }
         private double[] CreateArrayForRegularDistib(int numberOfvalues)
